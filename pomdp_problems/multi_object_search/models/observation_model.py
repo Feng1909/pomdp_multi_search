@@ -48,7 +48,10 @@ class MosObservationModel(pomdp_py.OOObservationModel):
             #                          for objid in next_state.object_states
             #                          if objid != next_state.object_states[objid].objclass != "robot"})
 
+        # print("sample:")
         factored_observations = super().sample(next_state, action, argmax=argmax)
+        # print("haha")
+        # print(factored_observations)
         return MosOOObservation.merge(factored_observations, next_state)
 
 class ObjectObservationModel(pomdp_py.ObservationModel):
@@ -130,7 +133,7 @@ class ObjectObservationModel(pomdp_py.ObservationModel):
         for i, robot_pose_single in enumerate(robot_pose):
             if self._sensor.within_range(robot_pose_single, object_pose):
                 flag = True
-        print(object_pose, flag)
+        # print(object_pose, flag)
         alpha, beta, gamma = self._compute_params(flag)
 
         # Requires Python >= 3.6
@@ -157,6 +160,7 @@ class ObjectObservationModel(pomdp_py.ObservationModel):
 
 
     def sample(self, next_state, action, **kwargs):
+        # print('yeah')
         """Returns observation"""
         if not isinstance(action, LookAction):
             # Not a look action. So no observation
@@ -170,6 +174,7 @@ class ObjectObservationModel(pomdp_py.ObservationModel):
         # alpha, beta, gamma = self._compute_params(self._sensor.within_range(robot_pose, object_pose))
         within_range_flag = False
         for i, pose in enumerate(next_state.pose(self._sensor.robot_id)):
+            # print(pose, self._objid, self._sensor.within_range(pose, next_state.pose(self._objid)))
             if self._sensor.within_range(pose, next_state.pose(self._objid)):
                 within_range_flag = True
         # for i, sensor in enumerate(self._sensor):
@@ -177,10 +182,21 @@ class ObjectObservationModel(pomdp_py.ObservationModel):
         #         within_range_flag = True
         #         break
         alpha, beta, gamma = self._compute_params(within_range_flag)
+        # print(alpha, beta, gamma)
 
         # Requires Python >= 3.6
         event_occured = random.choices(["A", "B", "C"], weights=[alpha, beta, gamma], k=1)[0]
+        # print(self._objid, next_state.pose(self._objid), within_range_flag, event_occured)
         zi = self._sample_zi(event_occured, next_state)
+        # print("zi: ", zi)
+        # if zi != None:
+        #     if (self._objid == 0 and within_range_flag and zi != (5, 0)) or \
+        #         (self._objid == 3 and within_range_flag and zi != (1, 2)) or \
+        #         (self._objid == 6 and within_range_flag and zi != (5, 4)) or \
+        #         (self._objid == 7 and within_range_flag and zi != (2, 5)) or \
+        #         (self._objid == 14 and within_range_flag and zi != (8, 7)):
+        #         print('wrong on: ', self._objid)
+        #         # sdf
         
         return ObjectObservation(self._objid, zi)
 

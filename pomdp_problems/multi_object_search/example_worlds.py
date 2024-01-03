@@ -123,7 +123,7 @@ def random_world(width, length, num_obj, num_obstacles,
                 x....Tq...\n
                 ..T...x.x.\n
                 x..x......\n
-                ...xx...T.\n
+                ...xx.....\n
                 ..........\n
                 ..........
                 """

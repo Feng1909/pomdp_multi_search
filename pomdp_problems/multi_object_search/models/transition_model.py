@@ -217,11 +217,13 @@ class RobotTransitionModel(pomdp_py.TransitionModel):
         elif isinstance(action, FindAction):
             robot_pose = state.pose(self._robot_id)
             z = self._sensor.observe(robot_pose, state)
+            # print("z: ", z)
             # Update "objects_found" set for target objects
             observed_target_objects = {objid
                                        for objid in z.objposes
                                        if (state.object_states[objid].objclass == "target"\
                                            and z.objposes[objid] != ObjectObservation.NULL)}
+            # print("now: ", set(observed_target_objects))
             next_robot_state["objects_found"] = tuple(set(next_robot_state['objects_found'])\
                                                       | set(observed_target_objects))
         return next_robot_state

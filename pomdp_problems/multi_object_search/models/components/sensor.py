@@ -52,7 +52,7 @@ class Laser2DSensor:
     """Fan shaped 2D laser sensor"""
 
     def __init__(self, robot_id,
-                 fov=90, min_range=1, max_range=5,
+                 fov=90, min_range=0, max_range=5,
                  angle_increment=5,
                  occlusion_enabled=False):
         """
@@ -97,6 +97,8 @@ class Laser2DSensor:
         """Returns true if the point is within range of the sensor; but the point might not
         actually be visible due to occlusion or "gap" between beams"""
         dist, bearing = self.shoot_beam(robot_pose, point)
+        if robot_pose == point:
+            return True
         if not in_range(dist, (self.min_range, self.max_range)):
             return False
         if (not in_range(bearing, self._fov_left))\
@@ -145,26 +147,32 @@ class Laser2DSensor:
         """
         # print("robot pose: ", robot_pose)
         # robot_pose_single = robot_pose[0]
+        objposes = {}
+        beam_map = {}
         for robot_pose_single in robot_pose:
             rx, ry, rth = robot_pose_single
 
             # Check every object
-            objposes = {}
-            beam_map = {}
+            # objposes = {}
+            # beam_map = {}
+            # print(self._occlusion_enabled)
             for objid in env_state.object_states:
-                objposes[objid] = ObjectObservation.NULL
+                if objid == self.robot_id:
+                    continue
+                if not objid in objposes:
+                    objposes[objid] = ObjectObservation.NULL
                 object_pose = env_state.object_states[objid]["pose"]
-                if not robot_pose_single in object_pose:
-                    beam = self.shoot_beam(robot_pose_single, object_pose)
+                # if not robot_pose_single in object_pose:
+                beam = self.shoot_beam(robot_pose_single, object_pose)
 
-                    if not self._occlusion_enabled:
-                        if self.valid_beam(*beam):
-                            d, bearing = beam  # distance, bearing
-                            lx = rx + int(round(d * math.cos(rth + bearing)))
-                            ly = ry + int(round(d * math.sin(rth + bearing)))
-                            objposes[objid] = (lx, ly)
-                    else:
-                        self._build_beam_map(beam, object_pose, beam_map=beam_map)
+                if not self._occlusion_enabled:
+                    if self.valid_beam(*beam):
+                        d, bearing = beam  # distance, bearing
+                        lx = rx + int(round(d * math.cos(rth + bearing)))
+                        ly = ry + int(round(d * math.sin(rth + bearing)))
+                        objposes[objid] = (lx, ly)
+                else:
+                    self._build_beam_map(beam, object_pose, beam_map=beam_map)
 
             if self._occlusion_enabled:
                 # The observed objects are in the beam_map

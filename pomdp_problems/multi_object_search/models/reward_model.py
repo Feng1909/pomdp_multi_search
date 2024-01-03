@@ -72,11 +72,12 @@ class GoalRewardModel(MosRewardModel):
                 # for robot in robot_id:
                 #     object_count -= set(state.object_states[robot].objects_found)
                 # new_objects_count = len(object_count)
+                # print("new count: ", new_objects_count)
                 if new_objects_count == 0:
                     # No new detection. "detect" is a bad action.
                     reward -= self.big
                 else:
                     # Has new detection. Award.
-                    reward += self.big*new_objects_count
+                    reward += self.big * new_objects_count
         return reward
     

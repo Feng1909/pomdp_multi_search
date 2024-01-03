@@ -305,16 +305,20 @@ cdef class OOObservationModel(ObservationModel):
         """
         sample(self, next_state, action, argmax=False, **kwargs)
         Returns random observation"""
+        # print("hello")
         if not isinstance(next_state, OOState):
             raise ValueError("state must be OOState")
         factored_observations = {}
         for objid in self._observation_models:
             if not argmax:
+                # print("sampling")
                 observation = self._observation_models[objid].sample(next_state,
                                                                      action, **kwargs)
+                # print("finished sampling")
             else:
                 observation = self._observation_models[objid].argmax(next_state,
                                                                      action, **kwargs)
+            # print(objid, observation.pose)
             factored_observations[objid] = observation
         if self._merge_func is None:
             return factored_observations

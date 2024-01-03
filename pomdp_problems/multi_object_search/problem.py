@@ -249,8 +249,10 @@ def solve(problem,
 
         # Receive observation
         _start = time.time()
+        # print("real observation:")
         real_observation = \
             problem.env.provide_observation(problem.agent.observation_model, real_action)
+        # print("end observation")
 
         # Updates
         problem.agent.clear_history()  # truncate history
@@ -310,7 +312,7 @@ def solve(problem,
         if _time_used > max_time:
             print("Maximum time reached.")
             break
-    TreeDebugger(problem.agent.tree).pp
+        TreeDebugger(problem.agent.tree).pp
 
 # Test
 def unittest():
@@ -326,13 +328,13 @@ def unittest():
                          prior="informed",
                          agent_has_map=True)
     solve(problem,
-          max_depth=4,
+          max_depth=20,
           discount_factor=0.99,
-          planning_time=5.,
-          exploration_const=1000,
+          planning_time=1.,
+          exploration_const=10,
           visualize=True,
-          max_time=12000,
-          max_steps=20)
+          max_time=120,
+          max_steps=50)
 
 if __name__ == "__main__":
     unittest()
