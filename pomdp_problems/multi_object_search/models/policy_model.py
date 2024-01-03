@@ -33,6 +33,7 @@ class PolicyModel(pomdp_py.RolloutPolicy):
             last_action = history[-1][0]
             if isinstance(last_action, LookAction):
                 can_find = True
+                return set({Find})
                 
         find_action = set({Find}) if can_find else set({})
         

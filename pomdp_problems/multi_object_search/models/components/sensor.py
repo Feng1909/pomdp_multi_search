@@ -52,7 +52,7 @@ class Laser2DSensor:
     """Fan shaped 2D laser sensor"""
 
     def __init__(self, robot_id,
-                 fov=90, min_range=0, max_range=5,
+                 fov=360, min_range=0, max_range=5,
                  angle_increment=5,
                  occlusion_enabled=False):
         """
@@ -97,8 +97,9 @@ class Laser2DSensor:
         """Returns true if the point is within range of the sensor; but the point might not
         actually be visible due to occlusion or "gap" between beams"""
         dist, bearing = self.shoot_beam(robot_pose, point)
-        if robot_pose == point:
+        if robot_pose[:2] == point:
             return True
+        # print(robot_pose[:2], point)
         if not in_range(dist, (self.min_range, self.max_range)):
             return False
         if (not in_range(bearing, self._fov_left))\

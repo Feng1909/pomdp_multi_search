@@ -61,8 +61,8 @@ class MosEnvironment(pomdp_py.Environment):
         next_state = copy.deepcopy(self.state)
         next_state.object_states[robot_id] =\
             self.transition_model[robot_id].sample(self.state, action)
-        print("last pose: ", self.state.pose(robot_id),\
-              "\nnext pose: ", next_state.object_states[robot_id].pose)
+        # print("last pose: ", self.state.pose(robot_id),\
+        #       "\nnext pose: ", next_state.object_states[robot_id].pose)
         # sdf
         # for robot in robot_id:
         #     next_state.object_states[robot] = self.transition_model[robot].sample(self.state, action)

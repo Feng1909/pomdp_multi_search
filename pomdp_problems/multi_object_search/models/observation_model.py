@@ -188,15 +188,6 @@ class ObjectObservationModel(pomdp_py.ObservationModel):
         event_occured = random.choices(["A", "B", "C"], weights=[alpha, beta, gamma], k=1)[0]
         # print(self._objid, next_state.pose(self._objid), within_range_flag, event_occured)
         zi = self._sample_zi(event_occured, next_state)
-        # print("zi: ", zi)
-        # if zi != None:
-        #     if (self._objid == 0 and within_range_flag and zi != (5, 0)) or \
-        #         (self._objid == 3 and within_range_flag and zi != (1, 2)) or \
-        #         (self._objid == 6 and within_range_flag and zi != (5, 4)) or \
-        #         (self._objid == 7 and within_range_flag and zi != (2, 5)) or \
-        #         (self._objid == 14 and within_range_flag and zi != (8, 7)):
-        #         print('wrong on: ', self._objid)
-        #         # sdf
         
         return ObjectObservation(self._objid, zi)
 

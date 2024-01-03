@@ -312,7 +312,7 @@ def solve(problem,
         if _time_used > max_time:
             print("Maximum time reached.")
             break
-        TreeDebugger(problem.agent.tree).pp
+        # TreeDebugger(problem.agent.tree).pp
 
 # Test
 def unittest():
