@@ -31,29 +31,6 @@ class GridMap:
         self.obstacle_poses = set({self._obstacles[objid]
                                    for objid in self._obstacles})        
 
-    # def valid_motions(self, robot_id, robot_pose, all_motion_actions):
-    #     """
-    #     Returns a set of MotionAction(s) that are valid to
-    #     be executed from robot pose (i.e. they will not bump
-    #     into obstacles). The validity is determined under
-    #     the assumption that the robot dynamics is deterministic.
-    #     """
-    #     state = MosOOState(self._obstacle_states)
-    #     state.set_object_state(robot_id,
-    #                            RobotState(robot_id, robot_pose, None, None))
-
-    #     valid = set({})
-    #     for motion_action in all_motion_actions:
-    #         if not isinstance(motion_action, MotionAction):
-    #             raise ValueError("This (%s) is not a motion action" % str(motion_action))
-
-    #         next_pose = RobotTransitionModel.if_move_by(robot_id, state,
-    #                                                     motion_action, (self.width, self.length))
-    #         if next_pose != robot_pose:
-    #             # robot moved --> valid motion
-    #             valid.add(motion_action)
-    #     return valid
-
     def valid_motions_multi(self, robot_id, robot_pose, all_motion_actions):
         pass
         """
@@ -63,11 +40,6 @@ class GridMap:
         the assumption that the robot dynamics is deterministic.
         """
         state = MosOOState(self._obstacle_states)
-        # state.set_object_state(robot_id,
-        #                        RobotState(robot_id, robot_pose, None, None))
-        # for i, robot in enumerate(robot_id):
-        #     state.set_object_state(robot,
-        #                            RobotState(robot, robot_pose[i], None, None))
         state.set_object_state(robot_id,
                                RobotState(robot_id, robot_pose, None, None))
         
@@ -76,12 +48,8 @@ class GridMap:
             if not isinstance(motion_action, MotionAction):
                 raise ValueError("This (%s) is not a motion action" % str(motion_action))
             
-            # next_pose = RobotTransitionModel.if_move_by(robot_id, state,
-            #                                             motion_action, (self.width, self.length))
             next_pose = RobotTransitionModel.if_move_by_multi(robot_id, state,
                                                         motion_action, (self.width, self.length))
-            # print(next_pose, robot_pose)
-            # if next_pose != robot_pose:
             if next_pose[0] != robot_pose[0] and next_pose[1] != robot_pose[1]:
                 # robot moved --> valid motion
                 valid.add(motion_action)

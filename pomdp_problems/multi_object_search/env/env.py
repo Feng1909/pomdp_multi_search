@@ -61,12 +61,6 @@ class MosEnvironment(pomdp_py.Environment):
         next_state = copy.deepcopy(self.state)
         next_state.object_states[robot_id] =\
             self.transition_model[robot_id].sample(self.state, action)
-        # print("last pose: ", self.state.pose(robot_id),\
-        #       "\nnext pose: ", next_state.object_states[robot_id].pose)
-        # sdf
-        # for robot in robot_id:
-        #     next_state.object_states[robot] = self.transition_model[robot].sample(self.state, action)
-        #     print("state update: ", robot, next_state.object_states[robot])
         
         reward = self.reward_model.sample(self.state, action, next_state,
                                           robot_id=robot_id)
@@ -152,8 +146,6 @@ def interpret(worldstr):
                 
             elif c.islower():
                 # robot
-                # robot_id = interpret_robot_id(c)
-                # robots[robot_id] = RobotState(robot_id, (x,y,0), (), None)
                 robot_poses.append((x,y,0))
 
             else:

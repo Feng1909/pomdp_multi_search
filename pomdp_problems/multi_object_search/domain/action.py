@@ -77,23 +77,6 @@ class MotionAction(Action):
     SOUTH_WEST = (0, STEP_SIZE, -STEP_SIZE, 0)
     SOUTH_NORTH = (0, STEP_SIZE, 0, -STEP_SIZE)
     
-    # EAST_EAST = (STEP_SIZE, 0, STEP_SIZE, 0)
-    # EAST_SOUTH = (STEP_SIZE, 0, 0, STEP_SIZE)
-    # EAST_WEST = (STEP_SIZE, -STEP_SIZE, 0, 0)
-    # EAST_NORTH = (STEP_SIZE, 0, 0, -STEP_SIZE)
-    # WEST_EAST = (-STEP_SIZE, STEP_SIZE, 0, 0)
-    # WEST_SOUTH = (-STEP_SIZE, 0, 0, STEP_SIZE)
-    # WEST_WEST = (-STEP_SIZE, -STEP_SIZE, 0, 0)
-    # WEST_NORTH = (-STEP_SIZE, 0, 0, -STEP_SIZE)
-    # NORTH_EAST = (0, -STEP_SIZE, STEP_SIZE, 0)
-    # NORTH_SOUTH = (0, -STEP_SIZE, 0, STEP_SIZE)
-    # NORTH_WEST = (0, STEP_SIZE, -STEP_SIZE, 0)
-    # NORTH_NORTH = (0, STEP_SIZE, 0, -STEP_SIZE)
-    # SOUTH_EAST = (0, -STEP_SIZE, STEP_SIZE, 0)
-    # SOUTH_SOUTH = (0, -STEP_SIZE, 0, STEP_SIZE)
-    # SOUTH_WEST = (0, -STEP_SIZE, -STEP_SIZE, 0)
-    # SOUTH_NORTH = (0, -STEP_SIZE, 0, -STEP_SIZE)
-    
     SCHEMES = {"xyth", "xy", "vw", "multi_robot"}
 
     def __init__(self, motion,

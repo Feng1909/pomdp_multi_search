@@ -47,18 +47,12 @@ class GoalRewardModel(MosRewardModel):
         if len(state.object_states[robot_id]['objects_found'])\
            == len(self._target_objects):
             return 0  # no reward or penalty; the task is finished.
-        # detected = set()
-        # for robot in robot_id:
-        #     detected.add(state.object_states[robot]['objects_found'])
-        # if len(detected) == len(self._target_objects):
-        #     return 0
         
         if isinstance(action, MotionAction):
             reward = reward - self.small - action.distance_cost
         elif isinstance(action, LookAction):
             reward = reward - self.small
         elif isinstance(action, FindAction):
-            # if state.object_states[robot_id]['camera_direction'] is None:
             if False:
                 # The robot didn't look before detect. So nothing is in the field of view.
                 reward -= self.big
@@ -66,13 +60,6 @@ class GoalRewardModel(MosRewardModel):
                 # transition function should've taken care of the detection.
                 new_objects_count = len(set(next_state.object_states[robot_id].objects_found)\
                                         - set(state.object_states[robot_id].objects_found))
-                # object_count = set()
-                # for robot in robot_id:
-                #     object_count = object_count | set(next_state.object_states[robot].objects_found)
-                # for robot in robot_id:
-                #     object_count -= set(state.object_states[robot].objects_found)
-                # new_objects_count = len(object_count)
-                # print("new count: ", new_objects_count)
                 if new_objects_count == 0:
                     # No new detection. "detect" is a bad action.
                     reward -= self.big

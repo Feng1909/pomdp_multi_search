@@ -30,16 +30,10 @@ class MosAgent(pomdp_py.Agent):
 
         # since the robot observes its own pose perfectly, it will have 100% prior
         # on this pose.
-        # prior[robot_id] = {init_robot_state.pose: 1.0}
-        # rth = init_robot_state.pose[2]
-        # print(init_robot_state.pose)
-        # for i, robot in enumerate(robot_id):
-        #     prior[robot] = {init_robot_state[i].pose: 1.0}
         prior_pose = {}
         for pose in init_robot_state.pose:
             prior_pose[pose] = 1.0
         prior[robot_id] = prior_pose
-        # robot_orientation = {robot_id[i]: init_robot_state[i].pose[2] for i in range(len(robot_id))}
         robot_orientation = {robot_id: 0}
 
         # initialize belief
@@ -51,10 +45,8 @@ class MosAgent(pomdp_py.Agent):
                                         robot_orientations=robot_orientation,
                                         num_particles=num_particles)
         
-        # robot_sensors = {robot_id[i]: sensor[i] for i in range(len(robot_id))}
         robot_sensors = {robot_id: sensor}
         transition_model = MosTransitionModel(dim,
-                                            #   {self.robot_id: self.sensor},
                                               robot_sensors,
                                               self._object_ids)
         observation_model = MosObservationModel(dim,

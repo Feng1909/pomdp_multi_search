@@ -44,14 +44,7 @@ class MosObservationModel(pomdp_py.OOObservationModel):
     def sample(self, next_state, action, argmax=False, **kwargs):
         if not isinstance(action, LookAction):
             return MosOOObservation({})
-            # return MosOOObservation({objid: ObjectObservationModel.NULL
-            #                          for objid in next_state.object_states
-            #                          if objid != next_state.object_states[objid].objclass != "robot"})
-
-        # print("sample:")
         factored_observations = super().sample(next_state, action, argmax=argmax)
-        # print("haha")
-        # print(factored_observations)
         return MosOOObservation.merge(factored_observations, next_state)
 
 class ObjectObservationModel(pomdp_py.ObservationModel):
@@ -101,21 +94,9 @@ class ObjectObservationModel(pomdp_py.ObservationModel):
         next_robot_state = kwargs.get("next_robot_state", None)
         
         if next_robot_state is not None:
-            # assert next_robot_state["id"] == self._sensor.robot_id,\
-            #     "Robot id of observation model mismatch with given state"
-            # print(next_robot_state["id"])
             assert next_robot_state["id"] == self._sensor.robot_id,\
                 "Robot id of observation model mismatch with given state"
             robot_pose = next_robot_state.pose
-            # sdf
-            # # for i, robot_state in enumerate(next_robot_state):
-            #     # if robot_state['id'] != self._sensor.robot_id:
-            #     #     continue
-            # assert robot_state['id'] == self._sensor[i].robot_id,\
-            #     "Robot id of observation model mismatch with given state"
-                
-            # robot_pose = next_robot_state.pose
-            # robot_pose = [i.pose for i in next_robot_state]
 
             if isinstance(next_state, ObjectState):
                 assert next_state["id"] == self._objid,\
@@ -165,41 +146,19 @@ class ObjectObservationModel(pomdp_py.ObservationModel):
         if not isinstance(action, LookAction):
             # Not a look action. So no observation
             return ObjectObservation(self._objid, ObjectObservation.NULL)
-
-        # sdf
-        # robot_pose = next_state.pose(self._sensor.robot_id)
-        # object_pose = next_state.pose(self._objid)
-
-        # Obtain observation according to distribution.
-        # alpha, beta, gamma = self._compute_params(self._sensor.within_range(robot_pose, object_pose))
+        
         within_range_flag = False
         for i, pose in enumerate(next_state.pose(self._sensor.robot_id)):
             # print(pose, self._objid, self._sensor.within_range(pose, next_state.pose(self._objid)))
             if self._sensor.within_range(pose, next_state.pose(self._objid)):
                 within_range_flag = True
-        # for i, sensor in enumerate(self._sensor):
-        #     if sensor.within_range(next_state.pose(sensor.robot_id), next_state.pose(self._objid)):
-        #         within_range_flag = True
-        #         break
+                
         alpha, beta, gamma = self._compute_params(within_range_flag)
-        # print(alpha, beta, gamma)
 
         # Requires Python >= 3.6
         event_occured = random.choices(["A", "B", "C"], weights=[alpha, beta, gamma], k=1)[0]
-        # print(self._objid, next_state.pose(self._objid), within_range_flag, event_occured)
         zi = self._sample_zi(event_occured, next_state)
         
-        return ObjectObservation(self._objid, zi)
-
-    def argmax(self, next_state, action, **kwargs):
-        # Obtain observation according to distribution.
-        alpha, beta, gamma = self._compute_params(self._sensor.within_range(robot_pose, object_pose))
-
-        event_probs = {"A": alpha,
-                       "B": beta,
-                       "C": gamma}
-        event_occured = max(event_probs, key=lambda e: event_probs[e])
-        zi = self._sample_zi(event_occured, next_state, argmax=True)
         return ObjectObservation(self._objid, zi)
 
     def _sample_zi(self, event, next_state, argmax=False):

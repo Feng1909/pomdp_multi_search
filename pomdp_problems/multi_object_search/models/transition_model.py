@@ -79,48 +79,6 @@ class RobotTransitionModel(pomdp_py.TransitionModel):
         self._robot_id = sensor.robot_id
         self._dim = dim
         self._epsilon = epsilon
-
-    # @classmethod
-    # def if_move_by(cls, robot_id, state, action, dim,
-    #                check_collision=True):
-    #     """Defines the dynamics of robot motion;
-    #     dim (tuple): the width, length of the search world."""
-    #     if not isinstance(action, MotionAction):
-    #         raise ValueError("Cannot move robot with %s action" % str(type(action)))
-    #     robot_pose = state.pose(robot_id)
-    #     rx, ry, rth = robot_pose
-    #     if action.scheme == MotionAction.SCHEME_XYTH:
-    #         dx, dy, th = action.motion
-    #         rx += dx
-    #         ry += dy
-    #         rth = th
-    #     elif action.scheme == MotionAction.SCHEME_VW:
-    #         # odometry motion model
-    #         forward, angle = action.motion
-    #         rth += angle  # angle (radian)
-    #         rx = int(round(rx + forward*math.cos(rth)))
-    #         ry = int(round(ry + forward*math.sin(rth)))
-    #         rth = rth % (2*math.pi)
-    #     elif action.scheme == MotionAction.SCHEME_MULTI:
-    #         motion = list(action.motion)
-    #         motions = [motion[i:i+2] for i in range(0, len(motion), 2)]
-    #         # print(motions)
-    #         if robot_id == -112:
-    #             dx, dy = motions[0]
-    #         else:
-    #             dx, dy = motions[1]
-    #         rx += dx
-    #         ry += dy
-    #         rth = 0
-
-    #     if valid_pose((rx, ry, rth),
-    #                   dim[0], dim[1],
-    #                   state=state,
-    #                   check_collision=check_collision,
-    #                   pose_objid=robot_id):
-    #         return (rx, ry, rth)
-    #     else:
-    #         return robot_pose  # no change because change results in invalid pose
         
     @classmethod
     def if_move_by_multi(cls, robot_id, state, action, dim,
@@ -130,9 +88,6 @@ class RobotTransitionModel(pomdp_py.TransitionModel):
         if not isinstance(action, MotionAction):
             raise ValueError("Cannot move robot with %s action" % str(type(action)))
 
-        # robot_pose = state.pose(robot_id)
-        # rx, ry, rth = robot_pose
-        # robot_poses = [state.pose(robot) for robot in robot_id]
         robot_poses = state.pose(robot_id)
         if action.scheme == MotionAction.SCHEME_XYTH:
             dx, dy, th = action.motion
@@ -163,14 +118,7 @@ class RobotTransitionModel(pomdp_py.TransitionModel):
                     return_poses.append((rx, ry, 0))
                 else:
                     return_poses.append(robot_pose)
-        # if valid_pose((rx, ry, rth),
-        #               dim[0], dim[1],
-        #               state=state,
-        #               check_collision=check_collision,
-        #               pose_objid=robot_id):
-        #     return (rx, ry, rth)
-        # else:
-        #     return robot_pose  # no change because change results in invalid pose
+                    
         return return_poses
 
     def probability(self, next_robot_state, state, action):
@@ -180,7 +128,6 @@ class RobotTransitionModel(pomdp_py.TransitionModel):
             return 1.0 - self._epsilon
 
     def argmax(self, state, action):
-        # print(state.pose(self._robot_id), action)
         """Returns the most likely next robot_state"""
         if isinstance(state, RobotState):
             robot_state = state
@@ -191,18 +138,6 @@ class RobotTransitionModel(pomdp_py.TransitionModel):
         # camera direction is only not None when looking 
         next_robot_state['camera_direction'] = None 
         if isinstance(action, MotionAction):
-            # motion action
-            # if type(self._robot_id) == type(list()):
-            #     print("hahahah")
-            #     print("hahahah")
-            #     print("hahahah")
-            #     print("hahahah")
-            #     print("hahahah")
-            #     print("hahahah")
-            #     next_robot_state['pose'] = \
-            #         RobotTransitionModel.if_move_by_multi(self._robot_id,
-            #                                         state, action, self._dim)
-            # else:
             next_robot_state['pose'] = \
                 RobotTransitionModel.if_move_by_multi(self._robot_id,
                                                 state, action, self._dim)
@@ -217,13 +152,11 @@ class RobotTransitionModel(pomdp_py.TransitionModel):
         elif isinstance(action, FindAction):
             robot_pose = state.pose(self._robot_id)
             z = self._sensor.observe(robot_pose, state)
-            # print("z: ", z)
             # Update "objects_found" set for target objects
             observed_target_objects = {objid
                                        for objid in z.objposes
                                        if (state.object_states[objid].objclass == "target"\
                                            and z.objposes[objid] != ObjectObservation.NULL)}
-            # print("now: ", set(observed_target_objects))
             next_robot_state["objects_found"] = tuple(set(next_robot_state['objects_found'])\
                                                       | set(observed_target_objects))
         return next_robot_state

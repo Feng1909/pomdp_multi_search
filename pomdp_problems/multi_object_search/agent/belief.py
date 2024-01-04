@@ -99,21 +99,9 @@ def _initialize_histogram_belief(dim, robot_id, object_ids, prior, robot_orienta
     # For the robot, we assume it can observe its own state;
     # Its pose must have been provided in the `prior`.
     assert robot_id in prior, "Missing initial robot pose in prior."
-    # for robot in robot_id:
-    #     if not robot in prior:
-    #         assert "Missing initial robot pose in prior."
 
     init_robot_pose = list(prior[robot_id].keys())
     oo_hists[robot_id] = pomdp_py.Histogram({RobotState(robot_id, init_robot_pose, (), None): 1.0})
-    
-    # oo_hists[robot_id] = pomdp_py.Histogram({RobotState(robot_id, list(prior[robot_id].keys())[0], (), None): 1.0})
-    # for robot in robot_id:
-    #     init_robot_pose = {RobotState(robot, list(prior[robot].keys())[0], (), None): 1.0}
-    #     oo_hists[robot] = pomdp_py.Histogram(init_robot_pose)
-    #     print(init_robot_pose)
-    #     print(oo_hists[robot])
-    #     print(oo_hists)
-    #     jjj
 
     return MosOOBelief(robot_id, oo_hists)
 

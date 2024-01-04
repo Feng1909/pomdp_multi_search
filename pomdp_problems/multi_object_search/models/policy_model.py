@@ -41,18 +41,9 @@ class PolicyModel(pomdp_py.RolloutPolicy):
             return ALL_MOTION_ACTIONS | {Look} | find_action
         else:
             if self._grid_map is not None:
-                # valid_motions =\
-                #     self._grid_map.valid_motions(self.robot_id[0],
-                #                                  state.pose(self.robot_id[0]),
-                #                                  ALL_MOTION_ACTIONS)
-                # valid_motions = self._grid_map.valid_motions_multi(self.robot_id,
-                #                                                    [state.pose(i) for i in self.robot_id],
-                #                                                    ALL_MOTION_ACTIONS)
                 valid_motions = self._grid_map.valid_motions_multi(self.robot_id,
                                                                    state.pose(self.robot_id),
                                                                    ALL_MOTION_ACTIONS)
-                # print(valid_motions)
-                # sdf
                 return valid_motions | {Look} | find_action
             else:
                 return ALL_MOTION_ACTIONS | {Look} | find_action

@@ -98,14 +98,11 @@ class MosOOPOMDP(pomdp_py.OOPOMDP):
                             for objid in env.obstacles}) if agent_has_map else None
 
         robot_pos = env.state.object_states[robot_id]
-        # robot_sensor = [env.sensors[i] for i in robot_id]
         robot_sensor = env.sensors[robot_id]
         agent = MosAgent(robot_id,
-                        #  env.state.object_states[robot_id],
                          robot_pos,
                          env.target_objects,
                          (env.width, env.length),
-                        #  env.sensors[robot_id],
                          robot_sensor,
                          sigma=sigma,
                          epsilon=epsilon,
@@ -131,11 +128,8 @@ def belief_update(agent, real_action, real_observation, next_robot_state, planne
             belief_obj = agent.cur_belief.object_belief(objid)
             if isinstance(belief_obj, pomdp_py.Histogram):
                 if objid == agent.robot_id:
-                # if objid in agent.robot_id:
                     # Assuming the agent can observe its own state:
-                    # number = agent.robot_id.index(objid)
                     print("Assuming the agent can observe its own state ", next_robot_state)
-                    # new_belief = pomdp_py.Histogram({next_robot_state[number]: 1.0})
                     new_belief = pomdp_py.Histogram({next_robot_state: 1.0})
                 else:
                     # This is doing
@@ -249,19 +243,15 @@ def solve(problem,
 
         # Receive observation
         _start = time.time()
-        # print("real observation:")
         real_observation = \
             problem.env.provide_observation(problem.agent.observation_model, real_action)
-        # print("end observation")
 
         # Updates
         problem.agent.clear_history()  # truncate history
         problem.agent.update_history(real_action, real_observation)
         belief_update(problem.agent, real_action, real_observation,
                       problem.env.state.object_states[robot_id],
-                    #   [problem.env.state.object_states[i] for i in robot_id],
                       planner)
-        # print(problem.agent.tree)
         _time_used += time.time() - _start
 
         # Info and render
@@ -280,7 +270,6 @@ def solve(problem,
         if visualize:
             # This is used to show the sensing range; Not sampled
             # according to observation model.\
-            # for robot in robot_id:
             robot_pose = problem.env.state.object_states[robot_id].pose
             viz_observation = MosOOObservation({})
             if isinstance(real_action, LookAction) or isinstance(real_action, FindAction):
@@ -300,12 +289,6 @@ def solve(problem,
            == problem.env.target_objects:
             print("Done!")
             break
-        # object_count = set()
-        # for robot in robot_id:
-        #     object_count = object_count | set(problem.env.state.object_states[robot].objects_found)
-        # if object_count == problem.env.target_objects:
-        #     print("Done!")
-        #     break
         if _find_actions_count >= len(problem.env.target_objects):
             print("FindAction limit reached.")
             break

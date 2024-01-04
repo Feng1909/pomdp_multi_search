@@ -99,7 +99,6 @@ class Laser2DSensor:
         dist, bearing = self.shoot_beam(robot_pose, point)
         if robot_pose[:2] == point:
             return True
-        # print(robot_pose[:2], point)
         if not in_range(dist, (self.min_range, self.max_range)):
             return False
         if (not in_range(bearing, self._fov_left))\
@@ -146,17 +145,12 @@ class Laser2DSensor:
         """
         Returns a MosObservation with this sensor model.
         """
-        # print("robot pose: ", robot_pose)
-        # robot_pose_single = robot_pose[0]
         objposes = {}
         beam_map = {}
         for robot_pose_single in robot_pose:
             rx, ry, rth = robot_pose_single
 
             # Check every object
-            # objposes = {}
-            # beam_map = {}
-            # print(self._occlusion_enabled)
             for objid in env_state.object_states:
                 if objid == self.robot_id:
                     continue
@@ -182,8 +176,6 @@ class Laser2DSensor:
                     lx = rx + int(round(d * math.cos(rth + bearing_key)))
                     ly = ry + int(round(d * math.sin(rth + bearing_key)))
                     objposes[objid] = (lx, ly)
-        # print(objposes)
-        # sdf
         return MosOOObservation(objposes)
 
     @property
