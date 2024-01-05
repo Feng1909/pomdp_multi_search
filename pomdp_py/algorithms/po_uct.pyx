@@ -245,8 +245,15 @@ cdef class POUCT(Planner):
             print("Warning: agent does not have tree. Have you planned yet?")
             return
 
+        print("update tree before: ", agent.tree)
+
         if real_action not in agent.tree\
            or real_observation not in agent.tree[real_action]:
+            print("yes")
+            print("yes")
+            print("yes")
+            print("yes")
+            print("yes")
             agent.tree = None  # replan, if real action or observation differs from all branches
         elif agent.tree[real_action][real_observation] is not None:
             # Update the tree (prune)
@@ -255,6 +262,28 @@ cdef class POUCT(Planner):
                 agent.history)
         else:
             raise ValueError("Unexpected state; child should not be None")
+        print("update tree after: ", agent.tree)
+        if agent.tree == None:
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
+            print("hahah")
 
     def clear_agent(self):
         self._agent = None  # forget about current agent so that can plan for another agent.
@@ -306,14 +335,11 @@ cdef class POUCT(Planner):
             pbar = tqdm(total=total)
 
         start_time = time.time()
+        print("tree", self._agent.tree)
         while True:
             ## Note: the tree node with () history will have
             ## the init belief given to the agent.
             state = self._agent.sample_belief()
-            # print("sim count: ", sims_count)
-            # print("agent tree: ", self._agent.tree)
-            # print(self._agent.history)
-            # print(self._agent)
             self._simulate(state, self._agent.history, self._agent.tree,
                            None, None, 0)
             sims_count +=1
@@ -362,9 +388,7 @@ cdef class POUCT(Planner):
             rollout_reward = self._rollout(state, history, root, depth)
             return rollout_reward
         cdef int nsteps
-        # print("root: ", root)
         action = self._ucb(root)
-        # print("action: ", action)
         next_state, observation, reward, nsteps = sample_generative_model(self._agent, state, action)
         if nsteps == 0:
             # This indicates the provided action didn't lead to transition
@@ -381,8 +405,6 @@ cdef class POUCT(Planner):
                                                                                depth+nsteps)
         root.num_visits += 1
         root[action].num_visits += 1
-        # print(total_reward)
-        # print(action, root[action].value, (total_reward - root[action].value), (root[action].num_visits))
         root[action].value = root[action].value + (total_reward - root[action].value) / (root[action].num_visits)
         return total_reward
 

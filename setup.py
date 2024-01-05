@@ -5,7 +5,8 @@ from Cython.Build import cythonize
 import os.path
 
 
-with open("README.rst", 'r') as f:
+# with open("README.md", 'r') as f:
+with open("README.md", "r", encoding='utf-8') as f:
     long_description = f.read()
 
 # Build cython files as extensions
@@ -27,15 +28,15 @@ extensions = build_extensions("pomdp_py", ["framework",
                                            "utils",
                                            "representations.distribution",
                                            "representations.belief"])
-extensions.extend(build_extensions("pomdp_problems", ["tiger.cythonize",
-                                                      "rocksample.cythonize"]))
+# extensions.extend(build_extensions("pomdp_problems", ["tiger.cythonize",
+#                                                       "rocksample.cythonize"]))
 
 setup(name='pomdp-py',
       packages=find_packages(),
       version='1.3.3',
       description='Python POMDP Library.',
       long_description=long_description,
-      long_description_content_type="text/x-rst",
+      long_description_content_type="text/markdown",
       install_requires=[
           'Cython',
           'numpy',

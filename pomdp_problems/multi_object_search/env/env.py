@@ -64,6 +64,7 @@ class MosEnvironment(pomdp_py.Environment):
         
         reward = self.reward_model.sample(self.state, action, next_state,
                                           robot_id=robot_id)
+        print("after transition: ", next_state.object_states[robot_id])
         if execute:
             self.apply_transition(next_state)
             return reward

@@ -153,8 +153,8 @@ class FindAction(Action):
     def __init__(self):
         super().__init__("find")
 
-Look = LookAction()
-Find = FindAction()
+# Look = LookAction()
+# Find = FindAction()
 
 if MOTION_SCHEME == "xy":
     ALL_MOTION_ACTIONS = {MoveEast, MoveWest, MoveNorth, MoveSouth}

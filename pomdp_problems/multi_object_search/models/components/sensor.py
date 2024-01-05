@@ -120,6 +120,7 @@ class Laser2DSensor:
         accordance with the angle increment."""
         return dist >= self.min_range and dist <= self.max_range\
             and round(bearing, 2) in self._beams
+        # return dist <= self.max_range
 
     def _build_beam_map(self, beam, point, beam_map={}):
         """beam_map (dict): Maps from bearing to (dist, point)"""
@@ -157,7 +158,7 @@ class Laser2DSensor:
                 if not objid in objposes:
                     objposes[objid] = ObjectObservation.NULL
                 object_pose = env_state.object_states[objid]["pose"]
-                # if not robot_pose_single in object_pose:
+                
                 beam = self.shoot_beam(robot_pose_single, object_pose)
 
                 if not self._occlusion_enabled:
@@ -197,7 +198,7 @@ class ProximitySensor(Laser2DSensor):
         self._occlusion_enabled = occlusion_enabled
 
         # This is in fact just a specific kind of Laser2DSensor
-        # that has a 360 field of view, min_range = 0.1 and
+        # that has a 360 field of view, min_range = 0.0 and
         # max_range = radius
         if occlusion_enabled:
             angle_increment = 5
@@ -205,7 +206,7 @@ class ProximitySensor(Laser2DSensor):
             angle_increment = 0.25
         super().__init__(robot_id,
                          fov=360,
-                         min_range=0.1,
+                         min_range=0.0,
                          max_range=radius,
                          angle_increment=angle_increment,
                          occlusion_enabled=occlusion_enabled)

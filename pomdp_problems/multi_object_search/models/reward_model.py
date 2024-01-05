@@ -4,7 +4,7 @@ import pomdp_py
 from pomdp_problems.multi_object_search.domain.action import *
 
 class MosRewardModel(pomdp_py.RewardModel):
-    def __init__(self, target_objects, big=1000, small=1, robot_id=None):
+    def __init__(self, target_objects, big=1000, small=10, robot_id=None):
         """
         robot_id (int): This model is the reward for one agent (i.e. robot),
                         If None, then this model could be for the environment.
@@ -50,21 +50,11 @@ class GoalRewardModel(MosRewardModel):
         
         if isinstance(action, MotionAction):
             reward = reward - self.small - action.distance_cost
-        elif isinstance(action, LookAction):
-            reward = reward - self.small
-        elif isinstance(action, FindAction):
-            if False:
-                # The robot didn't look before detect. So nothing is in the field of view.
-                reward -= self.big
-            else:
-                # transition function should've taken care of the detection.
-                new_objects_count = len(set(next_state.object_states[robot_id].objects_found)\
-                                        - set(state.object_states[robot_id].objects_found))
-                if new_objects_count == 0:
-                    # No new detection. "detect" is a bad action.
-                    reward -= self.big
-                else:
-                    # Has new detection. Award.
-                    reward += self.big * new_objects_count
+            ############非Find和Look动作也可以找到物体############
+            # transition function should've taken care of the detection.
+            new_objects_count = len(set(next_state.object_states[robot_id].objects_found)\
+                                    - set(state.object_states[robot_id].objects_found))
+            reward += self.big * new_objects_count
+            ####################################################
         return reward
     

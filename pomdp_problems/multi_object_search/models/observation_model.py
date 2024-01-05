@@ -42,8 +42,10 @@ class MosObservationModel(pomdp_py.OOObservationModel):
         pomdp_py.OOObservationModel.__init__(self, observation_models)
 
     def sample(self, next_state, action, argmax=False, **kwargs):
-        if not isinstance(action, LookAction):
-            return MosOOObservation({})
+        #######非Look动作也返回观测#######
+        # if not isinstance(action, LookAction):
+        #     return MosOOObservation({})
+        ################################
         factored_observations = super().sample(next_state, action, argmax=argmax)
         return MosOOObservation.merge(factored_observations, next_state)
 
@@ -80,12 +82,14 @@ class ObjectObservationModel(pomdp_py.ObservationModel):
             next_state (State)
             action (Action)
         """
-        if not isinstance(action, LookAction):
-            # No observation should be received
-            if observation.pose == ObjectObservation.NULL:
-                return 1.0
-            else:
-                return 0.0
+        ########非Look动作也返回观测#########
+        # if not isinstance(action, LookAction):
+        #     # No observation should be received
+        #     if observation.pose == ObjectObservation.NULL:
+        #         return 1.0
+        #     else:
+        #         return 0.0
+        ###################################
 
         if observation.objid != self._objid:
             raise ValueError("The observation is not about the same object")
@@ -114,7 +118,7 @@ class ObjectObservationModel(pomdp_py.ObservationModel):
         for i, robot_pose_single in enumerate(robot_pose):
             if self._sensor.within_range(robot_pose_single, object_pose):
                 flag = True
-        # print(object_pose, flag)
+                
         alpha, beta, gamma = self._compute_params(flag)
 
         # Requires Python >= 3.6
@@ -141,15 +145,10 @@ class ObjectObservationModel(pomdp_py.ObservationModel):
 
 
     def sample(self, next_state, action, **kwargs):
-        # print('yeah')
         """Returns observation"""
-        if not isinstance(action, LookAction):
-            # Not a look action. So no observation
-            return ObjectObservation(self._objid, ObjectObservation.NULL)
         
         within_range_flag = False
         for i, pose in enumerate(next_state.pose(self._sensor.robot_id)):
-            # print(pose, self._objid, self._sensor.within_range(pose, next_state.pose(self._objid)))
             if self._sensor.within_range(pose, next_state.pose(self._objid)):
                 within_range_flag = True
                 

@@ -66,7 +66,6 @@ class MosOOPOMDP(pomdp_py.OOPOMDP):
             worldstr = equip_sensors(grid_map, sensors)
             dim, robots, objects, obstacles, sensors = interpret(worldstr)
             init_state = MosOOState({**objects, **robots})
-            print("initial state: ", init_state, '\n\n')
 
             env = MosEnvironment(dim,
                           init_state, sensors,
@@ -120,6 +119,7 @@ def belief_update(agent, real_action, real_observation, next_robot_state, planne
     through planner update (e.g. when planner is POMCP)."""
     # Updates the planner; In case of POMCP, agent's belief is also updated.
     planner.update(agent, real_action, real_observation)
+    print("agent tree: ", agent.tree)
 
     # Update agent's belief, when planner is not POMCP
     if not isinstance(planner, pomdp_py.POMCP):
@@ -308,7 +308,7 @@ def unittest():
                          epsilon=0.95, # observation model parameter
                          grid_map=grid_map,
                          sensors={robot_char_1: proxstr},
-                         prior="informed",
+                         prior="uniform",
                          agent_has_map=True)
     solve(problem,
           max_depth=20,

@@ -141,17 +141,8 @@ class RobotTransitionModel(pomdp_py.TransitionModel):
             next_robot_state['pose'] = \
                 RobotTransitionModel.if_move_by_multi(self._robot_id,
                                                 state, action, self._dim)
-
-        elif isinstance(action, LookAction):
-            if hasattr(action, "motion") and action.motion is not None:
-                # rotate the robot
-                next_robot_state['pose'] = \
-                    self._if_move_by(self._robot_id,
-                                     state, action, self._dim)
-            next_robot_state['camera_direction'] = action.name
-        elif isinstance(action, FindAction):
-            robot_pose = state.pose(self._robot_id)
-            z = self._sensor.observe(robot_pose, state)
+            ######## 将Look和Find动作加入Motion中########
+            z = self._sensor.observe(next_robot_state['pose'], state)
             # Update "objects_found" set for target objects
             observed_target_objects = {objid
                                        for objid in z.objposes
